@@ -38,13 +38,13 @@ class TitleScreen extends StatelessWidget {
                 children: [
                   const Spacer(flex: 3),
                   Text(
-                    'A MURDER\nMYSTERY',
+                    'A MURDER MYSTERY',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'TODO: STORY TITLE',
+                    'BLACKWOOD\nMANOR',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.displayLarge,
                   ),
@@ -52,7 +52,7 @@ class TitleScreen extends StatelessWidget {
                   Container(height: 1, width: 140, color: AppTheme.sepia),
                   const SizedBox(height: 16),
                   Text(
-                    'TODO: short tagline goes here.',
+                    'A storm. A corpse. One hour until the police arrive.\nFind the killer before the truth slips away.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),

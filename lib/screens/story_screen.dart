@@ -83,7 +83,7 @@ class _StoryScreenState extends State<StoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('TODO  ·  STORY  TITLE'),
+        title: const Text('B L A C K W O O D   M A N O R'),
       ),
       body: SafeArea(
         child: Padding(
