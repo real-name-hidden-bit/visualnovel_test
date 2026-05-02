@@ -28,7 +28,7 @@ class StoryBrain {
         'Go to the parlor to interrogate the guests',
       ],
       nextScenes: [1, 2],
-      imagePath: 'assets/images/scenes/scene_00_arrival.jpg',
+      imagePath: 'assets/images/scenes/scene_00_arrival.png',
     ),
     // 1 — The Body
     Scene(
@@ -41,7 +41,7 @@ class StoryBrain {
         'Look for a guest wearing red clothes',
       ],
       nextScenes: [3, 4],
-      imagePath: 'assets/images/scenes/scene_01_body.jpg',
+      imagePath: 'assets/images/scenes/scene_01_body.png',
     ),
     // 2 — The Parlor
     Scene(
@@ -54,7 +54,7 @@ class StoryBrain {
         'Gently ask the Maid what she saw',
       ],
       nextScenes: [5, 4],
-      imagePath: 'assets/images/scenes/scene_02_parlor.jpg',
+      imagePath: 'assets/images/scenes/scene_02_parlor.png',
     ),
     // 3 — The Hidden Safe
     Scene(
@@ -67,7 +67,7 @@ class StoryBrain {
         'Keep quiet and wait for police backup',
       ],
       nextScenes: [6, 7],
-      imagePath: 'assets/images/scenes/scene_03_safe.jpg',
+      imagePath: 'assets/images/scenes/scene_03_safe.png',
     ),
     // 4 — The Maid in Red
     Scene(
@@ -80,7 +80,7 @@ class StoryBrain {
         'Believe her and check the security cameras',
       ],
       nextScenes: [8, 9],
-      imagePath: 'assets/images/scenes/scene_04_maid.jpg',
+      imagePath: 'assets/images/scenes/scene_04_maid.png',
     ),
     // 5 — The Partner's Alibi
     Scene(
@@ -93,7 +93,7 @@ class StoryBrain {
         'Accuse him of lying on the spot',
       ],
       nextScenes: [10, 6],
-      imagePath: 'assets/images/scenes/scene_05_partner.jpg',
+      imagePath: 'assets/images/scenes/scene_05_partner.png',
     ),
     // 6 — BAD ENDING 1: The Killer Escapes
     Scene(
@@ -104,7 +104,7 @@ class StoryBrain {
           "YOU FAILED.",
       choices: [],
       nextScenes: [],
-      imagePath: 'assets/images/scenes/ending_06_escape.jpg',
+      imagePath: 'assets/images/scenes/ending_06_escape.png',
       isEnding: true,
       endingLabel: 'The Killer Escapes — Bad Ending',
     ),
@@ -116,7 +116,7 @@ class StoryBrain {
           "the crime out of greed. YOU SOLVED THE CASE!",
       choices: [],
       nextScenes: [],
-      imagePath: 'assets/images/scenes/ending_07_confession.jpg',
+      imagePath: 'assets/images/scenes/ending_07_confession.png',
       isEnding: true,
       endingLabel: 'Justice Served — Good Ending',
     ),
@@ -128,7 +128,7 @@ class StoryBrain {
           "wickedly. The case is closed, but you arrested the wrong person.",
       choices: [],
       nextScenes: [],
-      imagePath: 'assets/images/scenes/ending_08_wrong.jpg',
+      imagePath: 'assets/images/scenes/ending_08_wrong.png',
       isEnding: true,
       endingLabel: 'Wrong Hands Cuffed — Neutral Ending',
     ),
@@ -140,7 +140,7 @@ class StoryBrain {
           "you corner him trying to pack his bags. YOU CAUGHT THE KILLER!",
       choices: [],
       nextScenes: [],
-      imagePath: 'assets/images/scenes/ending_09_caught.jpg',
+      imagePath: 'assets/images/scenes/ending_09_caught.png',
       isEnding: true,
       endingLabel: 'Caught Red-Handed — Good Ending',
     ),
@@ -152,7 +152,7 @@ class StoryBrain {
           "are trapped by the killer! YOU FAILED.",
       choices: [],
       nextScenes: [],
-      imagePath: 'assets/images/scenes/ending_10_trapped.jpg',
+      imagePath: 'assets/images/scenes/ending_10_trapped.png',
       isEnding: true,
       endingLabel: 'Trapped in the Dark — Bad Ending',
     ),

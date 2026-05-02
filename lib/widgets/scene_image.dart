@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
-/// Frames the scene image with a vintage sepia border + dark vignette.
-/// Falls back to a "missing image" panel if the asset isn't bundled yet.
 class SceneImage extends StatelessWidget {
   final String imagePath;
   const SceneImage({super.key, required this.imagePath});
@@ -22,7 +20,6 @@ class SceneImage extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             ColorFiltered(
-              // Slight sepia/desaturation for vintage feel.
               colorFilter: const ColorFilter.matrix(<double>[
                 0.55, 0.45, 0.10, 0, 0,
                 0.40, 0.55, 0.10, 0, 0,
@@ -42,7 +39,6 @@ class SceneImage extends StatelessWidget {
                 ),
               ),
             ),
-            // Dark vignette overlay.
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: RadialGradient(

@@ -1,5 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import '../models/story_brain.dart';
 import '../theme/app_theme.dart';
 import '../widgets/choice_button.dart';
@@ -27,25 +29,46 @@ class _StoryScreenState extends State<StoryScreen> {
   final AudioPlayer _bgm = AudioPlayer();   // R5 — background loop
   final AudioPlayer _sfx = AudioPlayer();   // R5 — key-moment SFX
 
+  // Audio is OFF until we confirm the asset is actually bundled. This avoids
+  // the audioplayers Windows-side hang when an AssetSource path is missing.
+  bool _bgmAvailable = false;
+  bool _sfxAvailable = false;
+
   @override
   void initState() {
     super.initState();
-    _startAmbience();
+    _initAudio();
   }
 
-  Future<void> _startAmbience() async {
+  Future<bool> _assetExists(String path) async {
     try {
-      await _bgm.setReleaseMode(ReleaseMode.loop);
-      await _bgm.play(AssetSource('audio/bgm_mystery.mp3'), volume: 0.4);
+      await rootBundle.load(path);
+      return true;
     } catch (_) {
-      // Audio file not yet placed — silently ignore until asset is added.
+      return false;
     }
   }
 
-  Future<void> _playSfx(String fileName) async {
-    try {
-      await _sfx.play(AssetSource('audio/$fileName'), volume: 0.9);
-    } catch (_) {/* asset not yet added */}
+  Future<void> _initAudio() async {
+    _bgmAvailable = await _assetExists('assets/audio/bgm_mystery.mp3');
+    _sfxAvailable = await _assetExists('assets/audio/sfx_thunder.mp3');
+    if (_bgmAvailable) {
+      try {
+        await _bgm.setReleaseMode(ReleaseMode.loop);
+        await _bgm.play(AssetSource('audio/bgm_mystery.mp3'), volume: 0.4);
+      } catch (e) {
+        debugPrint('BGM failed: $e');
+        _bgmAvailable = false;
+      }
+    }
+  }
+
+  void _playSfx(String fileName) {
+    if (!_sfxAvailable) return;
+    // Fire-and-forget; never await on the UI thread.
+    _sfx.play(AssetSource('audio/$fileName'), volume: 0.9).catchError((e) {
+      debugPrint('SFX failed: $e');
+    });
   }
 
   @override
