@@ -4,16 +4,7 @@ import '../widgets/choice_button.dart';
 import '../widgets/scene_image.dart';
 import 'title_screen.dart';
 
-/// Page 3 — END SCREEN (R6).
-///
-/// Layout:
-///   • AppBar  — "An Ending"
-///   • SafeArea body
-///       - SceneImage of final scene
-///       - VintageDivider
-///       - Ending label  (e.g. "Good Ending")
-///       - Closing narration in a Card
-///       - "RESTART" ElevatedButton — returns to TitleScreen and resets story
+
 class EndingScreen extends StatelessWidget {
   final String endingLabel;
   final String endingText;
@@ -27,8 +18,7 @@ class EndingScreen extends StatelessWidget {
   });
 
   void _restart(BuildContext context) {
-    // R6 — returning to title and constructing a fresh StoryBrain there
-    // resets the story from the beginning.
+
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const TitleScreen()),
       (route) => false,

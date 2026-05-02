@@ -1,5 +1,4 @@
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import '../models/story_brain.dart';
@@ -32,7 +31,11 @@ class _StoryScreenState extends State<StoryScreen> {
   // Audio is OFF until we confirm the asset is actually bundled. This avoids
   // the audioplayers Windows-side hang when an AssetSource path is missing.
   bool _bgmAvailable = false;
-  bool _sfxAvailable = false;
+  bool _thunderAvailable = false;
+  bool _doorAvailable = false;
+
+  // Discovery scenes — entering these triggers the door SFX.
+  static const _discoverySceneIndices = {1, 3, 4, 5};
 
   @override
   void initState() {
@@ -50,8 +53,9 @@ class _StoryScreenState extends State<StoryScreen> {
   }
 
   Future<void> _initAudio() async {
-    _bgmAvailable = await _assetExists('assets/audio/bgm_mystery.mp3');
-    _sfxAvailable = await _assetExists('assets/audio/sfx_thunder.mp3');
+    _bgmAvailable     = await _assetExists('assets/audio/bgm_mystery.mp3');
+    _thunderAvailable = await _assetExists('assets/audio/sfx_thunder.mp3');
+    _doorAvailable    = await _assetExists('assets/audio/sfx_door.mp3');
     if (_bgmAvailable) {
       try {
         await _bgm.setReleaseMode(ReleaseMode.loop);
@@ -63,8 +67,8 @@ class _StoryScreenState extends State<StoryScreen> {
     }
   }
 
-  void _playSfx(String fileName) {
-    if (!_sfxAvailable) return;
+  void _playSfx(String fileName, {required bool available}) {
+    if (!available) return;
     // Fire-and-forget; never await on the UI thread.
     _sfx.play(AssetSource('audio/$fileName'), volume: 0.9).catchError((e) {
       debugPrint('SFX failed: $e');
@@ -79,12 +83,19 @@ class _StoryScreenState extends State<StoryScreen> {
   }
 
   void _onChoice(int index) {
-    // R5 — example key-moment cue
-    _playSfx('sfx_thunder.mp3');
-
     setState(() {
       _brain.nextScene(index);
     });
+
+    // R5 — pick the SFX based on what we just navigated INTO.
+    final dest = _brain.currentScene;
+    if (_brain.isGameOver()) {
+      // Ending transitions: dramatic thunder.
+      _playSfx('sfx_thunder.mp3', available: _thunderAvailable);
+    } else if (_discoverySceneIndices.contains(dest)) {
+      // Discovery scenes (1, 3, 4, 5): door creak.
+      _playSfx('sfx_door.mp3', available: _doorAvailable);
+    }
 
     if (_brain.isGameOver()) {
       _bgm.stop();

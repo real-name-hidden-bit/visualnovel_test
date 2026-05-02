@@ -1,23 +1,9 @@
 import 'scene.dart';
 
-/// R1 — Manages all story scenes and current navigation state.
-///
-/// Encapsulation: data members are private (leading `_`). UI must only
-/// interact with the story through the public methods below.
-class StoryBrain {
-  // PRIVATE story data ------------------------------------------------------
-  int _currentScene = 0;
 
-  /// "Murder at Blackwood Manor" — full script.
-  /// 11 unique scenes · 6 decision points · 5 endings (2 good, 1 neutral, 2 bad).
-  ///
-  /// Note on R6: ending scenes set `isEnding: true` and supply an
-  /// `endingLabel`. The UI routes to a dedicated EndingScreen which provides
-  /// the required Restart button, so each ending's `choices` list is empty
-  /// here (the script's "Play Again / Restart Game" buttons are realized by
-  /// that single Restart button on the end screen).
+class StoryBrain {
+  int _currentScene = 0;
   final List<Scene> _scenes = const [
-    // 0 — Arrival
     Scene(
       storyText:
           "You arrive at the rain-soaked Blackwood Manor. The host, Arjae "
@@ -30,7 +16,6 @@ class StoryBrain {
       nextScenes: [1, 2],
       imagePath: 'assets/images/scenes/scene_00_arrival.png',
     ),
-    // 1 — The Body
     Scene(
       storyText:
           "Kneeling beside the body, you find two strange things: a pocket "
@@ -43,7 +28,6 @@ class StoryBrain {
       nextScenes: [3, 4],
       imagePath: 'assets/images/scenes/scene_01_body.png',
     ),
-    // 2 — The Parlor
     Scene(
       storyText:
           "In the parlor, you find the nervous Business Partner pacing, and "
@@ -56,7 +40,6 @@ class StoryBrain {
       nextScenes: [5, 4],
       imagePath: 'assets/images/scenes/scene_02_parlor.png',
     ),
-    // 3 — The Hidden Safe
     Scene(
       storyText:
           "Behind a crooked painting, you discover a hidden wall safe. It's "
@@ -69,7 +52,6 @@ class StoryBrain {
       nextScenes: [6, 7],
       imagePath: 'assets/images/scenes/scene_03_safe.png',
     ),
-    // 4 — The Maid in Red
     Scene(
       storyText:
           "You notice the Maid is wearing a red uniform... and the left sleeve "
@@ -82,7 +64,6 @@ class StoryBrain {
       nextScenes: [8, 9],
       imagePath: 'assets/images/scenes/scene_04_maid.png',
     ),
-    // 5 — The Partner's Alibi
     Scene(
       storyText:
           "The Partner sweats profusely. He claims he was down in the manor's "
@@ -95,7 +76,6 @@ class StoryBrain {
       nextScenes: [10, 6],
       imagePath: 'assets/images/scenes/scene_05_partner.png',
     ),
-    // 6 — BAD ENDING 1: The Killer Escapes
     Scene(
       storyText:
           "You confront the suspect aggressively without enough concrete "
@@ -108,7 +88,6 @@ class StoryBrain {
       isEnding: true,
       endingLabel: 'The Killer Escapes — Bad Ending',
     ),
-    // 7 — GOOD ENDING 1: Confession
     Scene(
       storyText:
           "Patience pays off. You hide the new will. When the police arrive, "
@@ -120,7 +99,6 @@ class StoryBrain {
       isEnding: true,
       endingLabel: 'Justice Served — Good Ending',
     ),
-    // 8 — NEUTRAL ENDING: Wrong Suspect
     Scene(
       storyText:
           "You arrest the Maid based on the torn fabric. The police "
@@ -132,7 +110,6 @@ class StoryBrain {
       isEnding: true,
       endingLabel: 'Wrong Hands Cuffed — Neutral Ending',
     ),
-    // 9 — GOOD ENDING 2: Caught on Camera
     Scene(
       storyText:
           "The security camera logs show the Business Partner sneaking out of "
@@ -144,7 +121,6 @@ class StoryBrain {
       isEnding: true,
       endingLabel: 'Caught Red-Handed — Good Ending',
     ),
-    // 10 — BAD ENDING 2: Trapped
     Scene(
       storyText:
           "You walk down into the pitch-black cellar alone. Suddenly, the "
@@ -159,13 +135,14 @@ class StoryBrain {
   ];
 
   // PUBLIC API --------------------------------------------------------------
+  int get currentScene => _currentScene;
+
   String getStoryText() => _scenes[_currentScene].storyText;
   List<String> getChoices() => _scenes[_currentScene].choices;
   String getImagePath() => _scenes[_currentScene].imagePath;
   bool isGameOver() => _scenes[_currentScene].isEnding;
   String getEndingLabel() => _scenes[_currentScene].endingLabel ?? 'The End';
 
-  /// Advance the story based on the choice index pressed.
   void nextScene(int choiceIndex) {
     final scene = _scenes[_currentScene];
     if (scene.isEnding) return;
@@ -173,7 +150,6 @@ class StoryBrain {
     _currentScene = scene.nextScenes[choiceIndex];
   }
 
-  /// Reset the story to the very beginning (used by the Restart button — R6).
   void restart() {
     _currentScene = 0;
   }
