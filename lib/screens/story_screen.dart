@@ -1,0 +1,136 @@
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
+import '../models/story_brain.dart';
+import '../theme/app_theme.dart';
+import '../widgets/choice_button.dart';
+import '../widgets/scene_image.dart';
+import 'ending_screen.dart';
+
+/// Page 2 — main STORY page. R2 (StatefulWidget + setState).
+///
+/// Vertical layout (top → bottom):
+///   • AppBar  — story title, small chapter indicator
+///   • SafeArea body (Column)
+///       1. SceneImage           (Expanded flex 5)  — picture for current scene
+///       2. VintageDivider
+///       3. Card with storyText  (Expanded flex 4)  — scrollable narration
+///       4. Choice buttons       (flex 3)           — ElevatedButtons in a Column
+class StoryScreen extends StatefulWidget {
+  const StoryScreen({super.key});
+
+  @override
+  State<StoryScreen> createState() => _StoryScreenState();
+}
+
+class _StoryScreenState extends State<StoryScreen> {
+  final StoryBrain _brain = StoryBrain();
+  final AudioPlayer _bgm = AudioPlayer();   // R5 — background loop
+  final AudioPlayer _sfx = AudioPlayer();   // R5 — key-moment SFX
+
+  @override
+  void initState() {
+    super.initState();
+    _startAmbience();
+  }
+
+  Future<void> _startAmbience() async {
+    try {
+      await _bgm.setReleaseMode(ReleaseMode.loop);
+      await _bgm.play(AssetSource('audio/bgm_mystery.mp3'), volume: 0.4);
+    } catch (_) {
+      // Audio file not yet placed — silently ignore until asset is added.
+    }
+  }
+
+  Future<void> _playSfx(String fileName) async {
+    try {
+      await _sfx.play(AssetSource('audio/$fileName'), volume: 0.9);
+    } catch (_) {/* asset not yet added */}
+  }
+
+  @override
+  void dispose() {
+    _bgm.dispose();
+    _sfx.dispose();
+    super.dispose();
+  }
+
+  void _onChoice(int index) {
+    // R5 — example key-moment cue
+    _playSfx('sfx_thunder.mp3');
+
+    setState(() {
+      _brain.nextScene(index);
+    });
+
+    if (_brain.isGameOver()) {
+      _bgm.stop();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => EndingScreen(
+            endingLabel: _brain.getEndingLabel(),
+            endingText: _brain.getStoryText(),
+            endingImage: _brain.getImagePath(),
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final choices = _brain.getChoices();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('TODO  ·  STORY  TITLE'),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+          child: Column(
+            children: [
+              // 1) Scene image
+              Expanded(
+                flex: 5,
+                child: SceneImage(imagePath: _brain.getImagePath()),
+              ),
+              const VintageDivider(),
+              // 2) Narration card
+              Expanded(
+                flex: 4,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: SingleChildScrollView(
+                      child: Text(
+                        _brain.getStoryText(),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // 3) Choices
+              Expanded(
+                flex: 3,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (int i = 0; i < choices.length; i++)
+                      ChoiceButton(
+                        label: choices[i],
+                        onPressed: () => _onChoice(i),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      backgroundColor: AppTheme.ink,
+    );
+  }
+}
