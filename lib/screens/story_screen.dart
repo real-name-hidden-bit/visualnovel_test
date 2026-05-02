@@ -7,15 +7,7 @@ import '../widgets/choice_button.dart';
 import '../widgets/scene_image.dart';
 import 'ending_screen.dart';
 
-/// Page 2 — main STORY page. R2 (StatefulWidget + setState).
-///
-/// Vertical layout (top → bottom):
-///   • AppBar  — story title, small chapter indicator
-///   • SafeArea body (Column)
-///       1. SceneImage           (Expanded flex 5)  — picture for current scene
-///       2. VintageDivider
-///       3. Card with storyText  (Expanded flex 4)  — scrollable narration
-///       4. Choice buttons       (flex 3)           — ElevatedButtons in a Column
+
 class StoryScreen extends StatefulWidget {
   const StoryScreen({super.key});
 
@@ -25,16 +17,12 @@ class StoryScreen extends StatefulWidget {
 
 class _StoryScreenState extends State<StoryScreen> {
   final StoryBrain _brain = StoryBrain();
-  final AudioPlayer _bgm = AudioPlayer();   // R5 — background loop
-  final AudioPlayer _sfx = AudioPlayer();   // R5 — key-moment SFX
+  final AudioPlayer _bgm = AudioPlayer();   
+  final AudioPlayer _sfx = AudioPlayer();   
 
-  // Audio is OFF until we confirm the asset is actually bundled. This avoids
-  // the audioplayers Windows-side hang when an AssetSource path is missing.
   bool _bgmAvailable = false;
-  bool _thunderAvailable = false;
   bool _doorAvailable = false;
 
-  // Discovery scenes — entering these triggers the door SFX.
   static const _discoverySceneIndices = {1, 3, 4, 5};
 
   @override
@@ -53,9 +41,8 @@ class _StoryScreenState extends State<StoryScreen> {
   }
 
   Future<void> _initAudio() async {
-    _bgmAvailable     = await _assetExists('assets/audio/bgm_mystery.mp3');
-    _thunderAvailable = await _assetExists('assets/audio/sfx_thunder.mp3');
-    _doorAvailable    = await _assetExists('assets/audio/sfx_door.mp3');
+    _bgmAvailable  = await _assetExists('assets/audio/bgm_mystery.mp3');
+    _doorAvailable = await _assetExists('assets/audio/sfx_door.mp3');
     if (_bgmAvailable) {
       try {
         await _bgm.setReleaseMode(ReleaseMode.loop);
@@ -69,7 +56,6 @@ class _StoryScreenState extends State<StoryScreen> {
 
   void _playSfx(String fileName, {required bool available}) {
     if (!available) return;
-    // Fire-and-forget; never await on the UI thread.
     _sfx.play(AssetSource('audio/$fileName'), volume: 0.9).catchError((e) {
       debugPrint('SFX failed: $e');
     });
@@ -87,13 +73,8 @@ class _StoryScreenState extends State<StoryScreen> {
       _brain.nextScene(index);
     });
 
-    // R5 — pick the SFX based on what we just navigated INTO.
     final dest = _brain.currentScene;
-    if (_brain.isGameOver()) {
-      // Ending transitions: dramatic thunder.
-      _playSfx('sfx_thunder.mp3', available: _thunderAvailable);
-    } else if (_discoverySceneIndices.contains(dest)) {
-      // Discovery scenes (1, 3, 4, 5): door creak.
+    if (!_brain.isGameOver() && _discoverySceneIndices.contains(dest)) {
       _playSfx('sfx_door.mp3', available: _doorAvailable);
     }
 
